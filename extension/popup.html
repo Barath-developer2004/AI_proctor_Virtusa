@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Jatayu Guardian Watchdog</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    body {
+      width: 320px;
+      font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+      background: #0a0a0f;
+      color: #e2e2e2;
+      padding: 16px;
+    }
+
+    .header {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin-bottom: 16px;
+    }
+
+    .header h1 {
+      font-size: 14px;
+      font-weight: 700;
+      letter-spacing: 0.5px;
+    }
+
+    .header .accent { color: #6c5ce7; }
+    .header .icon { font-size: 18px; }
+
+    .status-card {
+      background: #12121a;
+      border: 1px solid #1e1e2e;
+      border-radius: 10px;
+      padding: 12px;
+      margin-bottom: 12px;
+    }
+
+    .status-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 6px 0;
+      font-size: 12px;
+    }
+
+    .status-row:not(:last-child) {
+      border-bottom: 1px solid #1e1e2e;
+    }
+
+    .status-label { color: #888; }
+
+    .status-value {
+      font-weight: 600;
+      font-family: 'JetBrains Mono', monospace;
+    }
+
+    .badge {
+      display: inline-block;
+      padding: 2px 8px;
+      border-radius: 999px;
+      font-size: 11px;
+      font-weight: 600;
+    }
+
+    .badge-connected {
+      background: rgba(46, 213, 115, 0.15);
+      color: #2ed573;
+    }
+
+    .badge-disconnected {
+      background: rgba(255, 71, 87, 0.15);
+      color: #ff4757;
+    }
+
+    .violations-count {
+      font-size: 28px;
+      font-weight: 800;
+      text-align: center;
+      padding: 12px 0;
+    }
+
+    .violations-count.low { color: #2ed573; }
+    .violations-count.medium { color: #ffa502; }
+    .violations-count.high { color: #ff4757; }
+
+    .violations-label {
+      text-align: center;
+      font-size: 11px;
+      color: #666;
+      margin-bottom: 8px;
+    }
+
+    .footer {
+      text-align: center;
+      font-size: 10px;
+      color: #444;
+      margin-top: 12px;
+    }
+  </style>
+</head>
+<body>
+  <div class="header">
+    <span class="icon">🛡️</span>
+    <h1><span class="accent">Jatayu</span> Guardian Watchdog</h1>
+  </div>
+
+  <!-- Connection Status -->
+  <div class="status-card">
+    <div class="status-row">
+      <span class="status-label">WebSocket</span>
+      <span id="ws-status" class="badge badge-disconnected">Disconnected</span>
+    </div>
+    <div class="status-row">
+      <span class="status-label">Events Sent</span>
+      <span id="events-sent" class="status-value">0</span>
+    </div>
+    <div class="status-row">
+      <span class="status-label">Queue</span>
+      <span id="queue-size" class="status-value">0</span>
+    </div>
+  </div>
+
+  <!-- Violation Counter -->
+  <div class="status-card">
+    <div class="violations-label">VIOLATIONS DETECTED</div>
+    <div id="violation-count" class="violations-count low">0</div>
+  </div>
+
+  <div class="footer">
+    Monitoring assessment activity in real-time
+  </div>
+
+  <script src="popup.js"></script>
+</body>
+</html>
