@@ -217,28 +217,36 @@ export default function ExamPage() {
   }
 
   return (
-    <div className="min-h-screen">
-      {/* Phase indicator */}
-      <div className="bg-gray-900 border-b border-gray-800 px-6 py-3 flex items-center justify-between">
-        <div className="flex items-center gap-4">
-          <span className="text-orange-500 font-bold">Jatayu Proctor</span>
-          <div className="flex gap-2">
+    <div className="min-h-screen bg-black text-white font-sans flex flex-col">
+      {/* Sleek sticky header */}
+      <header className="sticky top-0 z-50 glass-panel border-b border-gray-800/50 px-6 py-4 flex flex-wrap items-center justify-between gap-4 shadow-xl">
+        <div className="flex items-center gap-6">
+          <div className="flex items-center gap-2">
+            <div className="w-2 h-2 rounded-full bg-red-500 animate-pulse shadow-[0_0_10px_rgba(239,68,68,0.8)]"></div>
+            <span className="text-transparent bg-clip-text bg-gradient-to-r from-orange-400 to-rose-500 font-black tracking-tight text-lg">
+              Jatayu <span className="text-white">Proctor</span>
+            </span>
+          </div>
+          <div className="hidden sm:flex items-center bg-gray-900/80 rounded-full p-1 border border-gray-800">
             {(["MCQ", "CODING", "SOCRATIC", "SABOTEUR", "COMPLETE"] as const).map((p) => (
-              <span
+              <div
                 key={p}
-                className={`px-3 py-1 rounded-full text-xs font-medium ${
+                className={`px-4 py-1.5 rounded-full text-xs font-bold transition-all ${
                   phase === p
-                    ? "bg-orange-600 text-white"
-                    : "bg-gray-800 text-gray-500"
+                    ? "bg-gradient-to-r from-cyan-600 to-blue-600 text-white shadow-[0_0_15px_rgba(8,145,178,0.4)]"
+                    : "text-gray-500"
                 }`}
               >
                 {p}
-              </span>
+              </div>
             ))}
           </div>
         </div>
-        <div className="flex items-center gap-4">
-          <span className="text-gray-500 text-sm">Session: {sessionId.slice(0, 8)}</span>
+        <div className="flex items-center gap-6">
+          <div className="flex flex-col items-end">
+            <span className="text-gray-500 text-xs font-mono uppercase tracking-widest">Session ID</span>
+            <span className="text-cyan-400 text-sm font-mono font-bold">{sessionId.slice(0, 8)}</span>
+          </div>
           {phase !== "COMPLETE" && (
             <button
               onClick={() => {
@@ -246,36 +254,53 @@ export default function ExamPage() {
                   router.push("/dashboard");
                 }
               }}
-              className="px-3 py-1 bg-red-900/30 text-red-500 hover:bg-red-600 hover:text-white rounded border border-red-700/50 text-xs font-bold transition-colors uppercase tracking-wider"
+              className="px-4 py-2 bg-red-950/40 text-red-500 hover:bg-red-600 hover:text-white rounded-lg border border-red-900/50 text-xs font-bold transition-all uppercase tracking-wider"
             >
               Quit Exam
             </button>
           )}
         </div>
-      </div>
+      </header>
 
-      {/* Phase content */}
-      <div className="p-4">
+      {/* Phase content area */}
+      <main className="flex-1 p-4 md:p-6 lg:p-8 relative">
+        {/* Mobile phase indicator */}
+        <div className="sm:hidden mb-6 flex justify-center">
+          <span className="px-4 py-1.5 rounded-full text-xs font-bold bg-gradient-to-r from-cyan-600 to-blue-600 text-white shadow-[0_0_15px_rgba(8,145,178,0.4)]">
+            PHASE: {phase}
+          </span>
+        </div>
+
         {phase === "MCQ" && (
           <MCQView mcqs={examMCQs} onSubmit={handleSubmitMCQs} />
         )}
 
         {phase === "CODING" && (
-          <div className="flex flex-col gap-4">
+          <div className="flex flex-col gap-6 max-w-7xl mx-auto">
             {prompt && (
-              <div className="bg-gray-800 p-6 rounded-xl border border-gray-700 shadow-md">
-                <h3 className="text-orange-500 font-bold text-lg mb-3">Problem Statement</h3>
-                <p className="text-gray-200 whitespace-pre-wrap leading-relaxed">{prompt}</p>
+              <div className="glass-card p-6 md:p-8 rounded-2xl">
+                <h3 className="flex items-center gap-3 text-cyan-400 font-black text-xl mb-4 uppercase tracking-widest">
+                  <span className="w-2 h-8 bg-cyan-500 rounded-full inline-block shadow-[0_0_10px_rgba(6,182,212,0.6)]"></span>
+                  Problem Statement
+                </h3>
+                <div className="text-gray-300 whitespace-pre-wrap leading-relaxed font-medium bg-black/30 p-4 rounded-xl border border-gray-800">
+                  {prompt}
+                </div>
               </div>
             )}
-            <CodeEditor onChange={setCode} language={selectedLanguage} onLanguageChange={setSelectedLanguage} />
-            <div className="mt-4 flex justify-end">
+
+            <div className="glass-panel p-2 rounded-2xl overflow-hidden shadow-2xl">
+              <CodeEditor onChange={setCode} language={selectedLanguage} onLanguageChange={setSelectedLanguage} />
+            </div>
+
+            <div className="flex justify-end pt-2">
               <button
                 onClick={handleSubmitCode}
                 disabled={!code.trim()}
-                className="px-6 py-2 bg-green-600 hover:bg-green-700 disabled:opacity-50 rounded-lg font-semibold transition-colors shadow-lg"
+                className="px-8 py-4 bg-gradient-to-r from-green-600 to-emerald-600 hover:from-green-500 hover:to-emerald-500 disabled:from-gray-700 disabled:to-gray-800 disabled:text-gray-500 rounded-xl font-black text-white text-lg transition-all shadow-[0_0_20px_rgba(16,185,129,0.3)] hover:shadow-[0_0_30px_rgba(16,185,129,0.5)] flex items-center gap-3"
               >
-                Submit Code →
+                Submit Solution
+                <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M14 5l7 7m0 0l-7 7m7-7H3" /></svg>
               </button>
             </div>
           </div>
@@ -290,7 +315,7 @@ export default function ExamPage() {
         )}
 
         {phase === "COMPLETE" && <ResultsView />}
-      </div>
+      </main>
 
       {/* Floating Proctor Widget */}
       {phase !== "COMPLETE" && <CameraProctor sessionId={sessionId} />}

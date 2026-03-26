@@ -61,56 +61,80 @@ export default function DashboardPage() {
   }
 
   return (
-    <div className="min-h-screen p-8 max-w-5xl mx-auto">
-      <div className="flex items-center justify-between mb-8">
+    <div className="min-h-screen p-8 max-w-5xl mx-auto relative">
+      {/* Ambient background */}
+      <div className="ambient-blob blob-orange opacity-10"></div>
+
+      <div className="flex flex-col md:flex-row items-start md:items-center justify-between mb-12 gap-6 glass-panel p-6 rounded-2xl relative z-10">
         <div>
-          <h1 className="text-3xl font-bold">Dashboard</h1>
-          <p className="text-gray-400">Welcome, {user.name}</p>
+          <h1 className="text-4xl font-black tracking-tight text-white mb-1">Candidate Dashboard</h1>
+          <p className="text-gray-400 text-lg">Welcome back, <span className="text-orange-400 font-semibold">{user.name}</span></p>
         </div>
         <div className="flex gap-4">
           <button
             onClick={() => router.push("/demo")}
-            className="px-6 py-2 bg-gradient-to-r from-cyan-600 to-blue-600 rounded-lg text-white font-black tracking-widest uppercase hover:scale-105 hover:shadow-[0_0_20px_rgba(34,211,238,0.4)] transition-all"
+            className="px-6 py-3 bg-gradient-to-r from-cyan-600 to-blue-600 rounded-xl text-white font-black tracking-widest uppercase hover:scale-105 hover:shadow-[0_0_20px_rgba(34,211,238,0.4)] transition-all border border-cyan-400/30"
           >
             ★ Demo Hub
           </button>
           <button
             onClick={() => { logout(); router.push("/login"); }}
-            className="px-4 py-2 border border-gray-700 rounded-lg hover:border-red-500 hover:text-red-400 transition-colors"
+            className="px-6 py-3 glass-panel text-gray-300 rounded-xl hover:border-red-500 hover:text-red-400 transition-colors font-semibold"
           >
             Logout
           </button>
         </div>
       </div>
 
-      <h2 className="text-xl font-semibold mb-4">Available Exams</h2>
-      {loading ? (
-        <p className="text-gray-400">Loading exams...</p>
-      ) : exams.length === 0 ? (
-        <p className="text-gray-500">No exams available yet.</p>
-      ) : (
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          {exams.map((exam) => (
-            <div
-              key={exam.id}
-              className="p-6 rounded-xl bg-gray-900 border border-gray-800 hover:border-orange-500/50 transition-colors"
-            >
-              <h3 className="font-semibold text-lg mb-1">{exam.title}</h3>
-              <p className="text-gray-400 text-sm mb-3">{exam.description}</p>
-              <div className="flex items-center gap-4 text-xs text-gray-500 mb-4">
-                <span className="px-2 py-1 bg-gray-800 rounded">{exam.language}</span>
-                <span>{Math.floor(exam.time_limit_sec / 60)} min</span>
-              </div>
-              <button
-                onClick={() => startExam(exam.id)}
-                className="px-4 py-2 bg-orange-600 hover:bg-orange-700 rounded-lg text-sm font-semibold transition-colors"
+      <div className="relative z-10">
+        <h2 className="text-2xl font-bold mb-6 flex items-center gap-3">
+          <span className="w-2 h-8 bg-orange-500 rounded-full inline-block"></span>
+          Available Assessments
+        </h2>
+
+        {loading ? (
+          <div className="glass-card p-12 text-center rounded-2xl">
+            <div className="animate-spin w-8 h-8 border-4 border-orange-500 border-t-transparent rounded-full mx-auto mb-4"></div>
+            <p className="text-gray-400 font-medium">Loading assessments...</p>
+          </div>
+        ) : exams.length === 0 ? (
+          <div className="glass-card p-12 text-center rounded-2xl border-dashed border-2 border-gray-700">
+            <p className="text-gray-400 text-lg">No assessments are currently available for you.</p>
+          </div>
+        ) : (
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            {exams.map((exam) => (
+              <div
+                key={exam.id}
+                className="glass-card p-8 rounded-2xl flex flex-col h-full relative overflow-hidden group"
               >
-                Start Exam
-              </button>
-            </div>
-          ))}
-        </div>
-      )}
+                <div className="absolute top-0 right-0 w-32 h-32 bg-orange-500/10 rounded-full blur-3xl -mr-10 -mt-10 transition-all group-hover:bg-orange-500/20"></div>
+
+                <h3 className="font-bold text-2xl text-white mb-2">{exam.title}</h3>
+                <p className="text-gray-400 text-sm mb-6 flex-grow leading-relaxed">{exam.description}</p>
+
+                <div className="flex flex-wrap items-center gap-3 text-xs text-gray-300 mb-6 font-medium">
+                  <span className="px-3 py-1.5 bg-gray-800/80 border border-gray-700 rounded-md flex items-center gap-2">
+                    <span className="w-2 h-2 rounded-full bg-cyan-400"></span>
+                    {exam.language.toUpperCase()}
+                  </span>
+                  <span className="px-3 py-1.5 bg-gray-800/80 border border-gray-700 rounded-md flex items-center gap-2">
+                    <span className="w-2 h-2 rounded-full bg-orange-400"></span>
+                    {Math.floor(exam.time_limit_sec / 60)} Minutes
+                  </span>
+                </div>
+
+                <button
+                  onClick={() => startExam(exam.id)}
+                  className="w-full py-3 premium-btn rounded-xl text-white font-bold text-sm uppercase tracking-wider"
+                >
+                  Start Assessment →
+                </button>
+              </div>
+            ))}
+          </div>
+        )}
+      </div>
     </div>
   );
 }
