@@ -1,0 +1,12 @@
+{
+  "contents": [
+    {
+      "role": "user",
+      "parts": [
+        {
+          "text": "Hello, this is a test message"
+        }
+      ]
+    }
+  ]
+}

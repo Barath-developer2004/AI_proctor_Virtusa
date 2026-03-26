@@ -1,88 +1,80 @@
-const API_BASE = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8081";
+import axios from "axios";
 
-async function request<T>(path: string, options?: RequestInit): Promise<T> {
-  const res = await fetch(`${API_BASE}${path}`, {
-    headers: { "Content-Type": "application/json" },
-    ...options,
-  });
-  if (!res.ok) {
-    const err = await res.json().catch(() => ({ error: res.statusText }));
-    throw new Error(err.error || "Request failed");
+const API_BASE = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8080";
+
+const api = axios.create({
+  baseURL: `${API_BASE}/api`,
+  headers: { "Content-Type": "application/json" },
+});
+
+api.interceptors.request.use((config) => {
+  if (typeof window !== "undefined") {
+    const token = localStorage.getItem("token");
+    if (token) {
+      config.headers.Authorization = `Bearer ${token}`;
+    }
   }
-  return res.json();
+  return config;
+});
+
+api.interceptors.response.use(
+  (res) => res,
+  (err) => {
+    if (err.response?.status === 401 && typeof window !== "undefined") {
+      localStorage.removeItem("token");
+      window.location.href = "/login";
+    }
+    return Promise.reject(err);
+  }
+);
+
+// ─── Auth ───
+export const authAPI = {
+  register: (data: { email: string; password: string; name: string; role?: string }) =>
+    api.post("/auth/register", data),
+  login: (data: { email: string; password: string }) =>
+    api.post("/auth/login", data),
+  me: () => api.get("/auth/me"),
+};
+
+// ─── Exams ───
+export const examAPI = {
+  list: () => api.get("/exams"),
+  create: (data: { title: string; description: string; language: string; prompt: string; time_limit_sec: number; mcqs: any[]; available_from?: string; available_until?: string }) => api.post("/exams", data),
+  get: (id: string) => api.get(`/exams/${id}`),
+};
+
+// ─── Sessions ───
+export const sessionAPI = {
+  start: (examId: string) => api.post("/sessions/start", { exam_id: examId }),
+  get: (id: string) => api.get(`/sessions/${id}`),
+  submitMCQs: (id: string, answers: number[]) => api.post(`/sessions/${id}/submit-mcqs`, { answers }),
+  submitCode: (id: string, code: string, language: string) => api.post(`/sessions/${id}/submit-code`, { code, language }),
+  socraticChat: (id: string, message: string) => api.post(`/sessions/${id}/socratic`, { message }),
+  endSocratic: (id: string) => api.post(`/sessions/${id}/end-socratic`),
+  saboteurFix: (id: string, code: string) => api.post(`/sessions/${id}/saboteur-fix`, { code }),
+  reportViolation: (id: string, type?: string) => api.post(`/sessions/${id}/violation`, type ? { type } : {}),
+};
+
+// ─── Admin ───
+export const adminAPI = {
+  listSessions: () => api.get("/admin/sessions"),
+  deleteSession: (id: string) => api.delete(`/admin/sessions/${id}`),
+};
+
+// ─── WebSocket ───
+export function createTelemetrySocket(sessionId: string): WebSocket | null {
+  const token = typeof window !== "undefined" ? localStorage.getItem("token") : null;
+  if (!token) return null;
+
+  const wsBase = API_BASE.replace(/^http/, "ws");
+  const ws = new WebSocket(`${wsBase}/ws/telemetry?token=${token}`);
+
+  ws.onopen = () => {
+    ws.send(JSON.stringify({ session_id: sessionId }));
+  };
+
+  return ws;
 }
 
-// ─── Candidate ───
-export function registerCandidate(name: string, email: string) {
-  return request<{ id: number; name: string; email: string; sessionToken: string }>(
-    "/api/candidates/register",
-    { method: "POST", body: JSON.stringify({ name, email }) }
-  );
-}
-
-export function getCandidate(id: number) {
-  return request<{ id: number; name: string; email: string; sessionToken: string }>(
-    `/api/candidates/${id}`
-  );
-}
-
-// ─── Assessment ───
-export function createAssessment(candidateId: number, title: string, problemStatement: string) {
-  return request<{ id: number; title: string; status: string }>(
-    "/api/assessments",
-    { method: "POST", body: JSON.stringify({ candidateId, title, problemStatement }) }
-  );
-}
-
-export function getAssessment(id: number) {
-  return request<{
-    id: number;
-    title: string;
-    problemStatement: string;
-    status: string;
-    submittedCode: string;
-    saboteurMutatedCode: string;
-  }>(`/api/assessments/${id}`);
-}
-
-// ─── Saboteur Protocol ───
-export function submitCode(assessmentId: number, code: string, language: string = "javascript") {
-  return request<{ assessmentId: number; mutatedCode: string; debugTimeLimitSeconds: number }>(
-    "/api/assessments/submit-code",
-    { method: "POST", body: JSON.stringify({ assessmentId, code, language }) }
-  );
-}
-
-export function submitDebuggedCode(assessmentId: number, code: string) {
-  return request<{ id: number; status: string; message: string }>(
-    `/api/assessments/${assessmentId}/submit-debug`,
-    { method: "POST", body: JSON.stringify({ code }) }
-  );
-}
-
-// ─── Socratic Chat ───
-export function sendChatMessage(assessmentId: number, message: string) {
-  return request<{ assessmentId: number; aiReply: string }>(
-    "/api/chat/message",
-    { method: "POST", body: JSON.stringify({ assessmentId, message }) }
-  );
-}
-
-export function getChatHistory(assessmentId: number) {
-  return request<{ role: string; content: string; sentAt: string }[]>(
-    `/api/chat/history/${assessmentId}`
-  );
-}
-
-// ─── Telemetry ───
-export function getTelemetryEvents(candidateId: number) {
-  return request<{ id: number; eventType: string; severity: string; recordedAt: string }[]>(
-    `/api/telemetry/candidate/${candidateId}`
-  );
-}
-
-export function getViolationCount(candidateId: number) {
-  return request<{ candidateId: number; violationCount: number }>(
-    `/api/telemetry/candidate/${candidateId}/count`
-  );
-}
+export default api;

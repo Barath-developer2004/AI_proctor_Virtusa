@@ -1,131 +1,68 @@
-"use client";
+import Link from "next/link";
 
-import { useState } from "react";
-import { registerCandidate, createAssessment } from "@/lib/api";
-
-export default function HomePage() {
-  const [name, setName] = useState("");
-  const [email, setEmail] = useState("");
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState("");
-  const [registered, setRegistered] = useState<{
-    id: number;
-    sessionToken: string;
-    assessmentId?: number;
-  } | null>(null);
-
-  const handleRegister = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setError("");
-    setLoading(true);
-
-    try {
-      const candidate = await registerCandidate(name.trim(), email.trim());
-      const assessment = await createAssessment(
-        candidate.id,
-        "Coding Challenge",
-        "Write a function that solves the given problem. You will be tested on your debugging ability."
-      );
-      setRegistered({
-        id: candidate.id,
-        sessionToken: candidate.sessionToken,
-        assessmentId: assessment.id,
-      });
-    } catch (err: any) {
-      setError(err.message || "Registration failed");
-    } finally {
-      setLoading(false);
-    }
-  };
-
+export default function Home() {
   return (
-    <div className="flex min-h-[70vh] items-center justify-center">
-      <div className="w-full max-w-md space-y-8">
-        {/* Hero */}
-        <div className="text-center">
-          <h1 className="text-4xl font-bold tracking-tight">
-            <span className="text-jatayu-accent">Jatayu</span> Proctor
-          </h1>
-          <p className="mt-2 text-gray-400">
-            Agentic AI Assessment Platform
-          </p>
+    <div className="min-h-screen py-20 px-4 flex flex-col items-center bg-black text-gray-100">
+      <div className="text-center max-w-3xl my-auto">
+        <h1 className="text-6xl font-bold tracking-tight mb-4">
+          <span className="text-orange-500">Jatayu</span> Proctor
+        </h1>
+        <p className="text-xl text-gray-400 mb-2">Agentic AI Assessment</p>
+        <p className="text-gray-500 mb-10 max-w-xl mx-auto">
+          Dynamic, AI-driven coding assessments that make cheating impossible
+          through Ghost-Typing Telemetry, Socratic Micro-Assessments, and the
+          Saboteur Protocol.
+        </p>
+
+        {/* Hackathon Demo Hub Button (Integrated cleanly into original design) */}
+        <div className="mb-10 animate-bounce">
+          <Link
+            href="/demo"
+            className="inline-block px-10 py-3 bg-cyan-600 hover:bg-cyan-500 shadow-[0_0_20px_rgba(8,145,178,0.5)] text-white rounded-xl font-bold tracking-wider uppercase transition-all"
+          >
+            ★ Launch Demo Hub
+          </Link>
         </div>
 
-        {!registered ? (
-          <form
-            onSubmit={handleRegister}
-            className="space-y-4 rounded-xl border border-jatayu-border bg-jatayu-panel p-6"
+        <div className="flex flex-col sm:flex-row gap-4 justify-center">
+          <Link
+            href="/login"
+            className="px-8 py-3 bg-orange-600 hover:bg-orange-700 rounded-lg font-semibold transition-colors"
           >
-            <h2 className="text-lg font-semibold">Candidate Registration</h2>
+            Login
+          </Link>
+          <Link
+            href="/register"
+            className="px-8 py-3 border border-gray-700 hover:border-orange-500 rounded-lg font-semibold transition-colors"
+          >
+            Register
+          </Link>
+        </div>
 
-            <div>
-              <label className="mb-1 block text-sm text-gray-400">Full Name</label>
-              <input
-                type="text"
-                required
-                value={name}
-                onChange={(e) => setName(e.target.value)}
-                className="w-full rounded-lg border border-jatayu-border bg-jatayu-dark px-4 py-2.5 text-sm outline-none focus:border-jatayu-accent transition-colors"
-                placeholder="John Doe"
-              />
-            </div>
-
-            <div>
-              <label className="mb-1 block text-sm text-gray-400">Email</label>
-              <input
-                type="email"
-                required
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                className="w-full rounded-lg border border-jatayu-border bg-jatayu-dark px-4 py-2.5 text-sm outline-none focus:border-jatayu-accent transition-colors"
-                placeholder="john@example.com"
-              />
-            </div>
-
-            {error && (
-              <p className="text-sm text-jatayu-danger">{error}</p>
-            )}
-
-            <button
-              type="submit"
-              disabled={loading}
-              className="w-full rounded-lg bg-jatayu-accent px-4 py-2.5 text-sm font-semibold text-white transition-all hover:brightness-110 disabled:opacity-50"
-            >
-              {loading ? "Registering..." : "Start Assessment →"}
-            </button>
-          </form>
-        ) : (
-          <div className="space-y-4 rounded-xl border border-jatayu-border bg-jatayu-panel p-6 text-center">
-            <div className="text-3xl">✅</div>
-            <h2 className="text-lg font-semibold">Registration Successful</h2>
-            <p className="text-sm text-gray-400">
-              Candidate ID: <span className="font-mono text-white">{registered.id}</span>
+        <div className="mt-20 grid grid-cols-1 md:grid-cols-3 gap-8 text-left">
+          <div className="p-6 rounded-xl bg-gray-900 border border-gray-800 transition-all hover:-translate-y-1 hover:border-gray-600">
+            <div className="text-2xl mb-3">👻</div>
+            <h3 className="font-semibold text-lg mb-2">Ghost-Typing Telemetry</h3>
+            <p className="text-gray-400 text-sm">
+              Tracks millisecond-level keystroke cadence to differentiate organic
+              human thinking from synthetic robotic transcription.
             </p>
-            <p className="text-sm text-gray-400">
-              Session: <span className="font-mono text-xs text-white">{registered.sessionToken}</span>
+          </div>
+          <div className="p-6 rounded-xl bg-gray-900 border border-gray-800 transition-all hover:-translate-y-1 hover:border-gray-600">
+            <div className="text-2xl mb-3">🧠</div>
+            <h3 className="font-semibold text-lg mb-2">Socratic Micro-Assessment</h3>
+            <p className="text-gray-400 text-sm">
+              AI-driven timed chat where Gemini dynamically counter-questions the
+              candidate to verify deep understanding.
             </p>
-            <a
-              href={`/assessment?candidateId=${registered.id}&assessmentId=${registered.assessmentId}`}
-              className="mt-4 inline-block rounded-lg bg-jatayu-accent px-6 py-2.5 text-sm font-semibold text-white transition-all hover:brightness-110"
-            >
-              Enter Assessment →
-            </a>
           </div>
-        )}
-
-        {/* Feature Cards */}
-        <div className="grid grid-cols-3 gap-3 text-center text-xs text-gray-500">
-          <div className="rounded-lg border border-jatayu-border bg-jatayu-panel p-3">
-            <div className="text-lg">🛡️</div>
-            <p className="mt-1">Guardian Watchdog</p>
-          </div>
-          <div className="rounded-lg border border-jatayu-border bg-jatayu-panel p-3">
-            <div className="text-lg">💀</div>
-            <p className="mt-1">Saboteur Protocol</p>
-          </div>
-          <div className="rounded-lg border border-jatayu-border bg-jatayu-panel p-3">
-            <div className="text-lg">🧠</div>
-            <p className="mt-1">Socratic AI Chat</p>
+          <div className="p-6 rounded-xl bg-gray-900 border border-gray-800 transition-all hover:-translate-y-1 hover:border-gray-600">
+            <div className="text-2xl mb-3">🔧</div>
+            <h3 className="font-semibold text-lg mb-2">The Saboteur Protocol</h3>
+            <p className="text-gray-400 text-sm">
+              AI secretly injects a logical bug into submitted code. Candidate gets
+              60 seconds to debug their own logic live.
+            </p>
           </div>
         </div>
       </div>
