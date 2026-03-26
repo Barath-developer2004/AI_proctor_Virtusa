@@ -131,117 +131,125 @@ export default function AdminPage() {
   }
 
   return (
-    <div className="min-h-screen">
+    <div className="min-h-screen relative bg-black">
+      {/* Ambient backgrounds */}
+      <div className="ambient-blob blob-cyan opacity-10"></div>
+
       {/* ─── NORMAL SCREEN ─── */}
-      <div className="p-8 max-w-7xl mx-auto print:hidden">
-        <div className="flex items-center justify-between mb-8">
+      <div className="p-8 max-w-7xl mx-auto print:hidden relative z-10">
+        <div className="flex items-center justify-between mb-8 glass-panel p-6 rounded-2xl">
           <div>
-            <h1 className="text-3xl font-bold">Admin Panel</h1>
-            <p className="text-gray-400">Jatayu Proctor — Assessment Management</p>
+            <h1 className="text-3xl font-black text-white">Admin Dashboard</h1>
+            <p className="text-cyan-400 font-medium">Jatayu Proctor — Assessment Management</p>
           </div>
           <button
             onClick={() => { logout(); router.push("/login"); }}
-            className="px-4 py-2 border border-gray-700 rounded-lg hover:border-red-500 hover:text-red-400 transition-colors"
+            className="px-6 py-2 border border-gray-700 rounded-xl hover:border-red-500 hover:text-red-400 transition-colors bg-black/50"
           >
             Logout
           </button>
         </div>
 
         {/* Tabs */}
-        <div className="flex gap-2 mb-6">
+        <div className="flex gap-4 mb-8">
           <button
             onClick={() => setTab("monitor")}
-            className={`px-4 py-2 rounded-lg text-sm font-medium ${tab === "monitor" ? "bg-orange-600" : "bg-gray-800 text-gray-400 hover:bg-gray-700"}`}
+            className={`px-6 py-3 rounded-xl text-sm font-bold transition-all ${tab === "monitor" ? "bg-cyan-600 text-white shadow-[0_0_15px_rgba(8,145,178,0.4)]" : "glass-panel text-gray-400 hover:text-white"}`}
           >
-            Live Monitor
+            <span className="mr-2">📊</span> Live Monitor
           </button>
           <button
             onClick={() => setTab("create")}
-            className={`px-4 py-2 rounded-lg text-sm font-medium ${tab === "create" ? "bg-orange-600" : "bg-gray-800 text-gray-400 hover:bg-gray-700"}`}
+            className={`px-6 py-3 rounded-xl text-sm font-bold transition-all ${tab === "create" ? "bg-cyan-600 text-white shadow-[0_0_15px_rgba(8,145,178,0.4)]" : "glass-panel text-gray-400 hover:text-white"}`}
           >
-            Create Exam
+            <span className="mr-2">✍️</span> Create Exam
           </button>
         </div>
 
         {tab === "monitor" && (
-          <div>
-            <div className="flex items-center justify-between mb-4">
-              <h2 className="text-xl font-semibold">Candidate Sessions</h2>
+          <div className="glass-card p-6 rounded-2xl">
+            <div className="flex items-center justify-between mb-6">
+              <h2 className="text-xl font-bold text-white">Candidate Sessions</h2>
               <button
                 onClick={() => {
                   setSessions(null);
                   void loadSessions();
                 }}
-                className="text-sm text-orange-500 hover:underline"
+                className="text-sm px-4 py-2 bg-gray-800 hover:bg-gray-700 rounded-lg text-cyan-400 transition-colors flex items-center gap-2"
               >
-                Refresh
+                <span>↻</span> Refresh
               </button>
             </div>
             {loading ? (
-              <p className="text-gray-400">Loading...</p>
+              <div className="py-12 text-center">
+                <div className="animate-spin w-8 h-8 border-4 border-cyan-500 border-t-transparent rounded-full mx-auto mb-4"></div>
+                <p className="text-gray-400 font-medium">Loading sessions...</p>
+              </div>
             ) : (sessions ?? []).length === 0 ? (
-              <p className="text-gray-500">No sessions yet.</p>
+              <div className="py-12 text-center border-2 border-dashed border-gray-700 rounded-xl">
+                <p className="text-gray-500">No candidate sessions found.</p>
+              </div>
             ) : (
-              <div className="overflow-x-auto">
+              <div className="overflow-x-auto rounded-xl border border-gray-800">
                 <table className="w-full text-sm text-left">
-                  <thead className="text-xs text-gray-400 border-b border-gray-800">
+                  <thead className="text-xs text-gray-400 bg-gray-900/80 border-b border-gray-800 uppercase tracking-wider">
                     <tr>
-                      <th className="px-4 py-3">Candidate</th>
-                      <th className="px-4 py-3">Phase</th>
-                      <th className="px-4 py-3">MCQ</th>
-                      <th className="px-4 py-3">Cadence</th>
-                      <th className="px-4 py-3">Socratic</th>
-                      <th className="px-4 py-3">Saboteur</th>
-                      <th className="px-4 py-3">Total Violations</th>
-                      <th className="px-4 py-3">Integrity</th>
-                      <th className="px-4 py-3 text-right">Actions</th>
+                      <th className="px-6 py-4 font-semibold">Candidate</th>
+                      <th className="px-6 py-4 font-semibold">Phase</th>
+                      <th className="px-6 py-4 font-semibold">MCQ</th>
+                      <th className="px-6 py-4 font-semibold">Cadence</th>
+                      <th className="px-6 py-4 font-semibold">Socratic</th>
+                      <th className="px-6 py-4 font-semibold">Saboteur</th>
+                      <th className="px-6 py-4 font-semibold">Violations</th>
+                      <th className="px-6 py-4 font-semibold">Integrity</th>
+                      <th className="px-6 py-4 font-semibold text-right">Actions</th>
                     </tr>
                   </thead>
-                  <tbody>
+                  <tbody className="divide-y divide-gray-800">
                     {(sessions ?? []).map((s) => (
-                      <tr key={s.id} className="border-b border-gray-800/50 hover:bg-gray-900/50 transition-colors">
-                        <td className="px-4 py-3">
-                          <div className="font-medium">{s.candidate_name}</div>
+                      <tr key={s.id} className="bg-black/20 hover:bg-gray-800/50 transition-colors">
+                        <td className="px-6 py-4">
+                          <div className="font-bold text-gray-200">{s.candidate_name}</div>
                           <div className="text-xs text-gray-500">{s.candidate_email}</div>
                         </td>
-                        <td className="px-4 py-3">
-                          <span className={`px-2 py-1 rounded text-xs font-medium ${s.phase === "COMPLETE" ? "bg-green-900 text-green-300" : "bg-blue-900 text-blue-300"}`}>
+                        <td className="px-6 py-4">
+                          <span className={`px-3 py-1 rounded-full text-xs font-bold ${s.phase === "COMPLETE" ? "bg-green-900/50 text-green-400 border border-green-800" : "bg-blue-900/50 text-blue-400 border border-blue-800"}`}>
                             {s.phase}
                           </span>
                         </td>
-                        <td className="px-4 py-3">{s.mcq_score ? Math.round(s.mcq_score) : "--"}</td>
-                        <td className="px-4 py-3">
-                          <span className={`px-2 py-1 rounded text-xs font-medium ${getCadenceBadge(s.cadence_verdict)}`}>
+                        <td className="px-6 py-4 font-medium text-gray-300">{s.mcq_score ? Math.round(s.mcq_score) : "--"}</td>
+                        <td className="px-6 py-4">
+                          <span className={`px-3 py-1 rounded-full text-xs font-bold border border-transparent ${getCadenceBadge(s.cadence_verdict)}`}>
                             {s.cadence_verdict}
                           </span>
                         </td>
-                        <td className="px-4 py-3">{s.socratic_score ? Math.round(s.socratic_score) : "--"}</td>
-                        <td className="px-4 py-3">
+                        <td className="px-6 py-4 font-medium text-gray-300">{s.socratic_score ? Math.round(s.socratic_score) : "--"}</td>
+                        <td className="px-6 py-4 font-bold">
                           {s.phase === "COMPLETE" ? (
-                            <span className={s.saboteur_passed ? "text-green-400" : "text-red-400"}>
+                            <span className={s.saboteur_passed ? "text-green-500" : "text-red-500"}>
                               {s.saboteur_passed ? "✓ PASS" : "✗ FAIL"}
                             </span>
-                          ) : "--"}
+                          ) : <span className="text-gray-600">--</span>}
                         </td>
-                        <td className="px-4 py-3">
-                          <span className={s.tab_violations > 0 ? "text-red-400" : "text-gray-500"}>
+                        <td className="px-6 py-4">
+                          <span className={`font-bold px-3 py-1 rounded-md ${s.tab_violations > 0 ? "bg-red-900/30 text-red-400 border border-red-800/50" : "text-gray-500"}`}>
                             {s.tab_violations}
                           </span>
                         </td>
-                        <td className="px-4 py-3 font-mono font-bold">
+                        <td className="px-6 py-4 font-mono font-black text-lg text-white">
                           {s.phase === "COMPLETE" ? Math.round(s.integrity_score) : "--"}
                         </td>
-                        <td className="px-4 py-3 text-right space-x-2">
+                        <td className="px-6 py-4 text-right space-x-3">
                           <button
                             onClick={() => setPrintSession(s)}
                             disabled={s.phase !== "COMPLETE"}
-                            className="px-2 py-1 text-xs font-semibold bg-gray-800 text-gray-300 rounded hover:bg-blue-600 hover:text-white disabled:opacity-50 transition-colors"
+                            className="text-sm font-semibold text-cyan-500 hover:text-cyan-400 disabled:opacity-30 transition-colors"
                           >
                             Report
                           </button>
                           <button
                             onClick={() => handleDeleteSession(s.id)}
-                            className="px-2 py-1 text-xs font-semibold bg-gray-800 text-red-400 rounded hover:bg-red-600 hover:text-white transition-colors"
+                            className="text-sm font-semibold text-red-500 hover:text-red-400 transition-colors"
                           >
                             Delete
                           </button>
@@ -256,82 +264,85 @@ export default function AdminPage() {
         )}
 
         {tab === "create" && (
-          <div className="max-w-2xl">
-            <h2 className="text-xl font-semibold mb-4">Create New Exam</h2>
+          <div className="glass-card p-8 rounded-2xl max-w-3xl">
+            <h2 className="text-2xl font-bold mb-6 text-white border-b border-gray-800 pb-4">Create New Assessment</h2>
             {createMsg && (
-              <div className={`mb-4 p-3 rounded-lg text-sm ${createMsg.includes("success") ? "bg-green-900/50 text-green-300" : "bg-red-900/50 text-red-300"}`}>
+              <div className={`mb-6 p-4 rounded-xl text-sm font-medium border ${createMsg.includes("success") ? "bg-green-950/40 border-green-500/30 text-green-400" : "bg-red-950/40 border-red-500/30 text-red-400"}`}>
                 {createMsg}
               </div>
             )}
-            <form onSubmit={handleCreateExam} className="space-y-4">
+            <form onSubmit={handleCreateExam} className="space-y-6">
               <div>
-                <label className="block text-sm font-medium mb-1">Title</label>
+                <label className="block text-sm font-bold text-gray-300 mb-2">Assessment Title</label>
                 <input type="text" value={title} onChange={(e) => setTitle(e.target.value)} required
-                  className="w-full px-4 py-2 bg-gray-900 border border-gray-700 rounded-lg focus:outline-none focus:border-orange-500" />
+                  className="w-full px-4 py-3 premium-input rounded-xl text-white placeholder-gray-600" placeholder="e.g. Senior Frontend Engineer Test" />
               </div>
               <div>
-                <label className="block text-sm font-medium mb-1">Description</label>
+                <label className="block text-sm font-bold text-gray-300 mb-2">Short Description</label>
                 <input type="text" value={description} onChange={(e) => setDescription(e.target.value)}
-                  className="w-full px-4 py-2 bg-gray-900 border border-gray-700 rounded-lg focus:outline-none focus:border-orange-500" />
+                  className="w-full px-4 py-3 premium-input rounded-xl text-white placeholder-gray-600" placeholder="Brief overview of what this tests..." />
               </div>
-              <div className="grid grid-cols-2 gap-4">
+              <div className="grid grid-cols-2 gap-6">
                 <div>
-                  <label className="block text-sm font-medium mb-1">Language</label>
+                  <label className="block text-sm font-bold text-gray-300 mb-2">Target Language</label>
                   <select value={language} onChange={(e) => setLanguage(e.target.value)}
-                    className="w-full px-4 py-2 bg-gray-900 border border-gray-700 rounded-lg focus:outline-none focus:border-orange-500">
-                    <option value="python">Python</option>
-                    <option value="javascript">JavaScript</option>
-                    <option value="java">Java</option>
-                    <option value="cpp">C++</option>
-                    <option value="go">Go</option>
+                    className="w-full px-4 py-3 premium-input rounded-xl text-white">
+                    <option value="python" className="bg-gray-900">Python</option>
+                    <option value="javascript" className="bg-gray-900">JavaScript</option>
+                    <option value="java" className="bg-gray-900">Java</option>
+                    <option value="cpp" className="bg-gray-900">C++</option>
+                    <option value="go" className="bg-gray-900">Go</option>
                   </select>
                 </div>
                 <div>
-                  <label className="block text-sm font-medium mb-1">Time Limit (seconds)</label>
+                  <label className="block text-sm font-bold text-gray-300 mb-2">Time Limit (seconds)</label>
                   <input type="number" value={timeLimit} onChange={(e) => setTimeLimit(Number(e.target.value))} min={300}
-                    className="w-full px-4 py-2 bg-gray-900 border border-gray-700 rounded-lg focus:outline-none focus:border-orange-500" />
+                    className="w-full px-4 py-3 premium-input rounded-xl text-white" />
                 </div>
               </div>
-              <div className="grid grid-cols-2 gap-4">
+              <div className="grid grid-cols-2 gap-6">
                 <div>
-                  <label className="block text-sm font-medium mb-1">Available From (Optional)</label>
+                  <label className="block text-sm font-bold text-gray-300 mb-2">Available From (Optional)</label>
                   <input type="datetime-local" value={availableFrom} onChange={(e) => setAvailableFrom(e.target.value)}
-                    className="w-full px-4 py-2 bg-gray-900 border border-gray-700 rounded-lg focus:outline-none focus:border-orange-500 text-sm xl:text-base [color-scheme:dark]" />
+                    className="w-full px-4 py-3 premium-input rounded-xl text-white [color-scheme:dark]" />
                 </div>
                 <div>
-                  <label className="block text-sm font-medium mb-1">Available Until (Optional)</label>
+                  <label className="block text-sm font-bold text-gray-300 mb-2">Available Until (Optional)</label>
                   <input type="datetime-local" value={availableUntil} onChange={(e) => setAvailableUntil(e.target.value)}
-                    className="w-full px-4 py-2 bg-gray-900 border border-gray-700 rounded-lg focus:outline-none focus:border-orange-500 text-sm xl:text-base [color-scheme:dark]" />
+                    className="w-full px-4 py-3 premium-input rounded-xl text-white [color-scheme:dark]" />
                 </div>
               </div>
               <div>
-                <label className="block text-sm font-medium mb-1">Problem Prompt</label>
-                <textarea value={prompt} onChange={(e) => setPrompt(e.target.value)} required rows={6}
-                  className="w-full px-4 py-2 bg-gray-900 border border-gray-700 rounded-lg focus:outline-none focus:border-orange-500"
+                <label className="block text-sm font-bold text-gray-300 mb-2">Main Coding Prompt</label>
+                <textarea value={prompt} onChange={(e) => setPrompt(e.target.value)} required rows={8}
+                  className="w-full px-4 py-3 premium-input rounded-xl text-white font-mono text-sm leading-relaxed"
                   placeholder="Write a function that takes a list of integers and returns..." />
               </div>
 
               {/* MCQ Builder Section */}
-              <div className="space-y-4">
+              <div className="space-y-4 pt-4 border-t border-gray-800">
                 <div className="flex items-center justify-between">
-                  <label className="block text-sm font-medium">Multiple Choice Questions</label>
+                  <div>
+                    <h3 className="text-lg font-bold text-white">Multiple Choice Questions</h3>
+                    <p className="text-sm text-gray-400">Add MCQs to test foundational knowledge.</p>
+                  </div>
                   <button
                     type="button"
                     onClick={addMcq}
-                    className="px-3 py-1 bg-blue-600 hover:bg-blue-700 text-white text-sm rounded-lg transition-colors"
+                    className="px-4 py-2 bg-blue-600/20 text-blue-400 border border-blue-600/50 hover:bg-blue-600 hover:text-white text-sm font-bold rounded-xl transition-all"
                   >
-                    + Add MCQ
+                    + Add Question
                   </button>
                 </div>
 
                 {mcqs.map((mcq, qIdx) => (
-                  <div key={qIdx} className="bg-gray-800 p-4 rounded-lg border border-gray-700 space-y-3">
+                  <div key={qIdx} className="bg-black/40 p-5 rounded-xl border border-gray-700 space-y-4">
                     <div className="flex items-center justify-between">
-                      <h4 className="text-sm font-medium text-gray-300">MCQ Question {qIdx + 1}</h4>
+                      <h4 className="text-sm font-bold text-cyan-400">Question {qIdx + 1}</h4>
                       <button
                         type="button"
                         onClick={() => removeMcq(qIdx)}
-                        className="text-red-400 hover:text-red-300 text-sm"
+                        className="text-red-500 hover:text-red-400 text-sm font-semibold"
                       >
                         Remove
                       </button>
@@ -342,27 +353,27 @@ export default function AdminPage() {
                         type="text"
                         value={mcq.question}
                         onChange={(e) => updateMcq(qIdx, "question", e.target.value)}
-                        placeholder="Enter question..."
-                        className="w-full px-3 py-2 bg-gray-900 border border-gray-600 rounded-lg focus:outline-none focus:border-orange-500 text-sm"
+                        placeholder="Enter the question here..."
+                        className="w-full px-4 py-3 premium-input rounded-lg text-white"
                       />
                     </div>
 
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-2">
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
                       {mcq.options.map((option, oIdx) => (
-                        <div key={oIdx} className="flex items-center gap-2">
+                        <div key={oIdx} className={`flex items-center gap-3 p-2 rounded-lg border ${mcq.answer === oIdx ? 'border-cyan-500 bg-cyan-500/10' : 'border-gray-700 bg-gray-900/50'}`}>
                           <input
                             type="radio"
                             name={`correct-${qIdx}`}
                             checked={mcq.answer === oIdx}
                             onChange={() => updateMcq(qIdx, "answer", oIdx)}
-                            className="text-orange-500"
+                            className="w-4 h-4 text-cyan-500 focus:ring-cyan-500"
                           />
                           <input
                             type="text"
                             value={option}
                             onChange={(e) => updateOption(qIdx, oIdx, e.target.value)}
                             placeholder={`Option ${String.fromCharCode(65 + oIdx)}`}
-                            className="flex-1 px-2 py-1 bg-gray-900 border border-gray-600 rounded focus:outline-none focus:border-orange-500 text-sm"
+                            className="flex-1 bg-transparent border-none focus:outline-none text-sm text-white placeholder-gray-500"
                           />
                         </div>
                       ))}
@@ -371,10 +382,12 @@ export default function AdminPage() {
                 ))}
               </div>
 
-              <button type="submit"
-                className="px-6 py-2 bg-orange-600 hover:bg-orange-700 rounded-lg font-semibold transition-colors">
-                Create Exam
-              </button>
+              <div className="pt-6">
+                <button type="submit"
+                  className="w-full py-4 bg-cyan-600 hover:bg-cyan-500 rounded-xl font-bold text-white text-lg transition-colors shadow-[0_0_20px_rgba(8,145,178,0.3)] hover:shadow-[0_0_30px_rgba(8,145,178,0.5)]">
+                  Launch Assessment
+                </button>
+              </div>
             </form>
           </div>
         )}
